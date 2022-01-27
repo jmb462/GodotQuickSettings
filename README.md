@@ -6,7 +6,12 @@ Easily access and edit your favorite project settings directly from an editor do
 
 # Installation
 - Copy `addons/QuickSettings` into your project (final path should be `res://addons/QuickSettings`).
+
+![image](https://user-images.githubusercontent.com/3649998/151448789-6d821080-01ad-49df-9b68-730e9ddcd965.png)
+
 - In the Godot Editor, go to **Project Settings > Plugins** and enable the **QuickSettings** plugin.
+
+![image](https://user-images.githubusercontent.com/3649998/151448713-234bc5ff-5461-402a-a766-6311bdd4f566.png)
 
 By default, it will create a new tab in the right editor dock. You can drag this tab to another dock if you prefer.
 

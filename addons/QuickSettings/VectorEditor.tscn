@@ -1,0 +1,84 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://addons/QuickSettings/VectorEditor.gd" type="Script" id=1]
+
+[node name="VectorEditor" type="VBoxContainer"]
+margin_right = 40.0
+margin_bottom = 40.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HBoxX" type="HBoxContainer" parent="."]
+margin_right = 85.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+
+[node name="LabelX" type="Label" parent="HBoxX"]
+margin_top = 5.0
+margin_right = 7.0
+margin_bottom = 19.0
+text = "x"
+
+[node name="SpinBoxX" type="SpinBox" parent="HBoxX"]
+margin_left = 11.0
+margin_right = 85.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+min_value = inf_neg
+max_value = inf
+step = 0.001
+allow_greater = true
+allow_lesser = true
+
+[node name="HBoxY" type="HBoxContainer" parent="."]
+margin_top = 28.0
+margin_right = 85.0
+margin_bottom = 52.0
+size_flags_horizontal = 3
+
+[node name="LabelY" type="Label" parent="HBoxY"]
+margin_top = 5.0
+margin_right = 7.0
+margin_bottom = 19.0
+text = "y"
+
+[node name="SpinBoxY" type="SpinBox" parent="HBoxY"]
+margin_left = 11.0
+margin_right = 85.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+min_value = inf_neg
+max_value = inf
+step = 0.001
+allow_greater = true
+allow_lesser = true
+
+[node name="HBoxZ" type="HBoxContainer" parent="."]
+visible = false
+margin_top = 56.0
+margin_right = 85.0
+margin_bottom = 80.0
+size_flags_horizontal = 3
+
+[node name="LabelZ" type="Label" parent="HBoxZ"]
+margin_top = 5.0
+margin_right = 7.0
+margin_bottom = 19.0
+text = "z"
+
+[node name="SpinBoxZ" type="SpinBox" parent="HBoxZ"]
+margin_left = 11.0
+margin_right = 85.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+min_value = inf_neg
+max_value = inf
+step = 0.001
+allow_greater = true
+allow_lesser = true
+
+[connection signal="value_changed" from="HBoxX/SpinBoxX" to="." method="on_spinbox_value_changed" binds= [ 0 ]]
+[connection signal="value_changed" from="HBoxY/SpinBoxY" to="." method="on_spinbox_value_changed" binds= [ 1 ]]
+[connection signal="value_changed" from="HBoxZ/SpinBoxZ" to="." method="on_spinbox_value_changed" binds= [ 2 ]]

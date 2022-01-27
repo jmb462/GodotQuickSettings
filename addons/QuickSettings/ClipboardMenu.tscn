@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://addons/QuickSettings/ClipboardMenu.gd" type="Script" id=1]
+
+[node name="ClipboardMenu" type="PopupMenu"]
+margin_right = 20.0
+margin_bottom = 20.0
+items = [ "Copy path", null, 0, false, false, 0, 0, null, "", false, "Copy value", null, 0, false, false, 1, 0, null, "", false, "Copy value as text", null, 0, false, false, 2, 0, null, "", false, "", null, 0, false, false, -1, 0, null, "", true, "Paste value", null, 0, false, false, 4, 0, null, "", false ]
+script = ExtResource( 1 )
+
+[connection signal="id_pressed" from="." to="." method="on_ClipboardMenu_id_pressed"]

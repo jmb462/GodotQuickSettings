@@ -1,0 +1,66 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://addons/QuickSettings/PropertySelector.gd" type="Script" id=1]
+
+[node name="PropertySelector" type="ConfirmationDialog"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_right = -512.0
+rect_pivot_offset = Vector2( 0.036, 0 )
+popup_exclusive = true
+window_title = "Add a property  to QuickSettings"
+resizable = true
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 8.0
+margin_top = 8.0
+margin_right = -8.0
+margin_bottom = -36.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+margin_right = 496.0
+margin_bottom = 24.0
+
+[node name="FilterLabel" type="Label" parent="VBoxContainer/HBoxContainer"]
+margin_top = 5.0
+margin_right = 46.0
+margin_bottom = 19.0
+text = "Search:"
+
+[node name="Filter" type="LineEdit" parent="VBoxContainer/HBoxContainer"]
+margin_left = 50.0
+margin_right = 496.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+clear_button_enabled = true
+placeholder_text = "Filter properties by keywords"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer"]
+margin_top = 28.0
+margin_right = 496.0
+margin_bottom = 556.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Tree" type="Tree" parent="VBoxContainer/ScrollContainer"]
+margin_right = 496.0
+margin_bottom = 528.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+hide_root = true
+
+[connection signal="text_changed" from="VBoxContainer/HBoxContainer/Filter" to="." method="build_tree"]
+[connection signal="item_activated" from="VBoxContainer/ScrollContainer/Tree" to="." method="_on_Tree_item_activated"]
+[connection signal="item_selected" from="VBoxContainer/ScrollContainer/Tree" to="." method="_on_Tree_item_selected"]

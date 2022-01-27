@@ -1,0 +1,69 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://addons/QuickSettings/ArrayEditor.gd" type="Script" id=1]
+
+[node name="ArrayEditor" type="AcceptDialog"]
+margin_right = 300.0
+margin_bottom = 250.0
+rect_min_size = Vector2( 300, 250 )
+popup_exclusive = true
+window_title = "Array Editor"
+resizable = true
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 8.0
+margin_top = 8.0
+margin_right = -8.0
+margin_bottom = -36.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+margin_right = 284.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+
+[node name="SizeLabel" type="Label" parent="VBoxContainer/HBoxContainer"]
+margin_top = 5.0
+margin_right = 67.0
+margin_bottom = 19.0
+text = "Array Size:"
+align = 1
+
+[node name="SizeSpin" type="SpinBox" parent="VBoxContainer/HBoxContainer"]
+margin_left = 71.0
+margin_right = 284.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+allow_greater = true
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer"]
+margin_top = 28.0
+margin_right = 284.0
+margin_bottom = 32.0
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer"]
+margin_top = 36.0
+margin_right = 284.0
+margin_bottom = 206.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Tree" type="Tree" parent="VBoxContainer/ScrollContainer"]
+margin_right = 284.0
+margin_bottom = 170.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+columns = 2
+
+[connection signal="value_changed" from="VBoxContainer/HBoxContainer/SizeSpin" to="." method="on_SizeSpin_value_changed"]
+[connection signal="item_edited" from="VBoxContainer/ScrollContainer/Tree" to="." method="on_Tree_item_edited"]

@@ -41,11 +41,19 @@ __meta__ = {
 margin_right = 1024.0
 margin_bottom = 22.0
 
-[node name="PropertySelectorButton" type="Button" parent="VBoxContainer/HBoxContainer"]
+[node name="ProjectPropertySelectorButton" type="Button" parent="VBoxContainer/HBoxContainer"]
 modulate = Color( 1, 1, 1, 0.7 )
 margin_right = 162.0
 margin_bottom = 22.0
 text = "Add Project Property"
+icon = SubResource( 2 )
+
+[node name="EditorPropertySelectorButton" type="Button" parent="VBoxContainer/HBoxContainer"]
+modulate = Color( 1, 1, 1, 0.7 )
+margin_left = 166.0
+margin_right = 320.0
+margin_bottom = 22.0
+text = "Add Editor Property"
 icon = SubResource( 2 )
 
 [node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer"]
@@ -62,12 +70,41 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 columns = 2
 
+[node name="RestartLabel" type="Label" parent="VBoxContainer"]
+visible = false
+margin_top = 582.0
+margin_right = 1024.0
+margin_bottom = 596.0
+size_flags_horizontal = 3
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "The editor must be restarted for changes to take effect."
+align = 1
+autowrap = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer"]
+visible = false
+margin_top = 574.0
+margin_right = 1024.0
+margin_bottom = 596.0
+alignment = 1
+
+[node name="RestartButton" type="Button" parent="VBoxContainer/HBoxContainer2"]
+modulate = Color( 1, 1, 1, 0.7 )
+margin_left = 440.0
+margin_right = 584.0
+margin_bottom = 22.0
+text = "  Save and restart "
+icon = SubResource( 2 )
+
 [node name="FileDialog" type="FileDialog" parent="."]
 visible = true
 margin_right = 521.0
 margin_bottom = 266.0
 popup_exclusive = true
-window_title = "Open a File"
+window_title = "Ouvrir un fichier"
 mode = 0
 filters = PoolStringArray( "*.png" )
 __meta__ = {

@@ -47,7 +47,7 @@ placeholder_text = "Filter properties by keywords"
 [node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer"]
 margin_top = 28.0
 margin_right = 496.0
-margin_bottom = 556.0
+margin_bottom = 498.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 __meta__ = {
@@ -56,10 +56,49 @@ __meta__ = {
 
 [node name="Tree" type="Tree" parent="VBoxContainer/ScrollContainer"]
 margin_right = 496.0
-margin_bottom = 528.0
+margin_bottom = 470.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 hide_root = true
+
+[node name="VBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+margin_top = 502.0
+margin_right = 496.0
+margin_bottom = 526.0
+
+[node name="SelectedLabel" type="Label" parent="VBoxContainer/VBoxContainer"]
+margin_top = 5.0
+margin_right = 100.0
+margin_bottom = 19.0
+rect_min_size = Vector2( 100, 0 )
+text = "Property:"
+align = 2
+
+[node name="PropertyNameEdit" type="LineEdit" parent="VBoxContainer/VBoxContainer"]
+margin_left = 104.0
+margin_right = 496.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+editable = false
+
+[node name="VBoxContainer2" type="HBoxContainer" parent="VBoxContainer"]
+margin_top = 530.0
+margin_right = 496.0
+margin_bottom = 554.0
+
+[node name="DisplayNameLabel" type="Label" parent="VBoxContainer/VBoxContainer2"]
+margin_top = 5.0
+margin_right = 100.0
+margin_bottom = 19.0
+rect_min_size = Vector2( 100, 0 )
+text = "Display Name:"
+align = 2
+
+[node name="DisplayNameEdit" type="LineEdit" parent="VBoxContainer/VBoxContainer2"]
+margin_left = 104.0
+margin_right = 496.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
 
 [connection signal="text_changed" from="VBoxContainer/HBoxContainer/Filter" to="." method="build_tree"]
 [connection signal="item_activated" from="VBoxContainer/ScrollContainer/Tree" to="." method="_on_Tree_item_activated"]

@@ -25,7 +25,6 @@ onready var config_save_location : String = String(self.get_script().get_path())
 # Base plugin interface
 onready var project_property_selector_button : Button = $VBoxContainer/HBoxContainer/ProjectPropertySelectorButton
 onready var editor_property_selector_button : Button = $VBoxContainer/HBoxContainer/EditorPropertySelectorButton
-onready var restart_button : Button = $VBoxContainer/HBoxContainer2/RestartButton
 onready var restart_label : Label = $VBoxContainer/RestartLabel
 onready var grid : GridContainer = $VBoxContainer/ScrollContainer/GridContainer
 
@@ -33,20 +32,20 @@ onready var grid : GridContainer = $VBoxContainer/ScrollContainer/GridContainer
 onready var array_editor : ArrayEditor= $ArrayEditor
 onready var file_dialog = $FileDialog
 onready var property_selector = $PropertySelector
-onready var clipboard_menu : ClipBoardMenu = $ClipboardMenu
-
+onready var context_menu : ContextMenu = $ContextMenu
+onready var rename_dialog : RenamePropertyDialog = $RenameDialog
 # Vector editor
 onready var vector_editor_packed_scene : PackedScene = preload("VectorEditor.tscn")
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	setup_button(project_property_selector_button, "Add", "on_property_selector_button_pressed", {}, MODE.PROJECT)
-	setup_button(restart_button, "StatusWarning", "on_restart_pressed")
 	setup_button(editor_property_selector_button, "Add", "on_property_selector_button_pressed", {}, MODE.EDITOR)
 	restart_label.add_color_override("font_color", restart_label.get_color("warning_color", "Editor"))
 	property_selector.connect("confirmed", self, "on_property_selector_confirmed")
 	array_editor.connect("confirmed", self, "on_array_editor_confirmed")
-
+	rename_dialog.connect("confirmed", self, "on_rename_confirmed")
+	
 func setup_button(p_control : Control, p_icon : String, p_callback : String, p_property : Dictionary = {}, p_mode : int = MODE.PROJECT):
 	var parameters : Array = []
 	if p_control is TextureButton:
@@ -66,7 +65,7 @@ func setup_button(p_control : Control, p_icon : String, p_callback : String, p_p
 	p_control.connect("pressed", self, p_callback, parameters)
 	p_control.modulate.a = 0.7
 
-func add_property_from_string(property_string, loading_config = false):
+func add_property_from_string(property_string : String, display_name : String = String(), loading_config = false):
 	var mode : int = get_mode(property_string)
 	if mode == -1:
 		print("QuickSetting : Property %s not found" % [property_string])
@@ -83,10 +82,11 @@ func add_property_from_string(property_string, loading_config = false):
 	for property in property_list:
 		if property["name"] == property_string:
 			settings.append(property)
-			if property["usage"] & 4096:
-				request_restart_properties.append(property["name"])
 			if not loading_config:
-				settings_names.append(property["name"])
+				var dict_setting : Dictionary = {}
+				dict_setting["name"] = property["name"]
+				dict_setting["display_name"] = display_name
+				settings_names.append(dict_setting)
 	if not loading_config:
 		save_config()
 	update_view()
@@ -114,20 +114,21 @@ func add_to_grid(property : Dictionary):
 	var hbox_left : HBoxContainer = HBoxContainer.new()
 	hbox_left.size_flags_horizontal = SIZE_EXPAND_FILL
 	hbox_left.set_meta("property_name", property_name)
-	hbox_left.hint_tooltip = property_name
+	hbox_left.hint_tooltip = get_tooltip_text(property_name)
 	
 	var property_label : Label = Label.new()
 	property_label.size_flags_horizontal = SIZE_EXPAND_FILL
 	property_label.mouse_filter = Control.MOUSE_FILTER_STOP
-	property_label.hint_tooltip = property_name
+	property_label.hint_tooltip = get_tooltip_text(property_name)
 	property_label.connect("gui_input", self, "on_mouse_input_over_property_label", [property])
-	property_label.text = Array(property_name.split("/")).pop_back().capitalize()
+	property_label.text = get_display_name(property_name)
 	hbox_left.add_child(property_label)
 	
 	var revert_icon : TextureButton = TextureButton.new()
 	setup_button(revert_icon, "Reload", "on_revert_button_pressed", property)
 	revert_icon.set_meta("revert_button", true)
 	revert_icon.visible =  property_can_revert(property_name)
+	revert_icon.hint_tooltip = "Revert to default value"
 	hbox_left.add_child(revert_icon)
 	
 	grid.add_child(hbox_left)
@@ -258,6 +259,7 @@ func add_to_grid(property : Dictionary):
 				
 	var remove_icon : TextureButton = TextureButton.new()
 	setup_button(remove_icon, "Remove", "on_remove_button_pressed", property)
+	remove_icon.hint_tooltip = "Remove from Quicksettings"
 	hbox_right.add_child(remove_icon)
 	hbox_right.set_meta("property_name", property_name)
 	grid.add_child(hbox_right)
@@ -353,7 +355,8 @@ func update_revert_icon(property_name : String) -> void:
 
 func on_property_selector_confirmed() -> void:
 	if not property_selector.selected_property.empty():
-		add_property_from_string(property_selector.selected_property)
+		var display_name : String = property_selector.get_display_name()
+		add_property_from_string(property_selector.selected_property, display_name)
 
 
 func _on_FileDialog_file_selected(path) -> void:
@@ -364,16 +367,17 @@ func _on_FileDialog_file_selected(path) -> void:
 func on_mouse_input_over_property_label(event, property) -> void:
 	if event is InputEventMouseButton and event.is_pressed():
 		if event.button_index == BUTTON_RIGHT:
-			clipboard_menu.set_edited_property(property["name"])
-			clipboard_menu.build(property["type"])
+			edited_property = property["name"]
+			context_menu.set_edited_property(property["name"])
+			context_menu.build(property["type"])
 			
-			clipboard_menu.set_position(get_global_mouse_position())
-			clipboard_menu.popup()
+			context_menu.set_position(get_global_mouse_position())
+			context_menu.popup()
 
 func get_mode(property : String) -> int:
 	if ProjectSettings.has_setting(property):
 		return MODE.PROJECT
-	elif editor_plugin.get_editor_interface().get_editor_settings().has_setting(property):
+	elif editor_plugin and editor_plugin.get_editor_interface().get_editor_settings().has_setting(property):
 		return MODE.EDITOR
 	return -1
 
@@ -429,15 +433,56 @@ func save_value(property) -> void:
 
 func show_restart_warning():
 	restart_label.show()
-	restart_button.get_parent().show()
 
-func on_restart_pressed():
-	editor_plugin.get_editor_interface().save_all_scenes();
-	editor_plugin.get_editor_interface().restart_editor();
+func on_restart_pressed(_mode : int):
+#	editor_plugin.get_editor_interface().save_scene();
+#	editor_plugin.get_editor_interface().restart_editor();
+	pass
 
 func on_editor_settings_changed():
 	update_view()
+
+# Get customized display name or default
+func get_display_name(property_name : String, default : bool = false) -> String:
+	if not default:
+		for setting in settings_names:
+			if setting is Dictionary and setting.has("name") and setting.has("display_name"):
+				if setting["name"] == property_name and setting["display_name"] != "":
+					return setting["display_name"]
+	return Array(property_name.split("/")).pop_back().capitalize()
+
+# Is setting already added to QuickSettings
+func has_setting(property_name : String) -> bool:
+	for setting in settings_names:
+		if setting is Dictionary and setting.has("name"):
+			if setting["name"] == property_name:
+				return true
+	return false
+
+func get_tooltip_text(property_name : String) -> String:
+	var tooltip : String
+	if get_mode(property_name) == MODE.PROJECT:
+		tooltip += "Project Property :\n"
+	if get_mode(property_name) == MODE.EDITOR:
+		tooltip += "Editor Property :\n"
+	tooltip += property_name
+	return tooltip
+
+func on_rename_requested(property : String):
+	rename_dialog.set_property(property)
+	rename_dialog.set_defaut_texture(grid.get_icon("Reload", "EditorIcons"))
+	rename_dialog.popup_centered()
+
+func on_rename_confirmed():
+	var new_name : String = rename_dialog.line_edit.text.strip_edges()
+	for setting in settings_names:
+		if setting is Dictionary and setting.has("name"):
+			if setting["name"] == edited_property:
+				setting["display_name"] = new_name
+				save_config()
+				update_view()
 	
+
 # Load / Save plugin configuration
 func load_config() -> void:
 	var config_file : ConfigFile = ConfigFile.new()
@@ -446,7 +491,8 @@ func load_config() -> void:
 		return
 	settings_names = config_file.get_value("Project Settings", "settings", [])
 	for setting in settings_names:
-		add_property_from_string(setting, true)
+		if setting is Dictionary:
+			add_property_from_string(setting["name"], setting["display_name"], true)
 	
 func save_config() -> void:
 	var config_file : ConfigFile = ConfigFile.new()
@@ -454,3 +500,12 @@ func save_config() -> void:
 	var err : int = config_file.save(config_save_location + "/QuickSettings.cfg")
 	if err != OK:
 		print("QuickSettings failed to write configuration on disk. (Error %s)" % [err])
+
+
+func initialize(p_editor_plugin : EditorPlugin):
+	editor_plugin = p_editor_plugin
+	var properties = get_properties_from_settings(MODE.PROJECT)
+	properties.append_array(get_properties_from_settings(MODE.EDITOR))
+	for property in properties:
+		if property["usage"] & 4096 and request_restart_properties.find(property["name"]) == -1:
+				request_restart_properties.append(property["name"])

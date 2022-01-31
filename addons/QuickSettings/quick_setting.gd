@@ -13,6 +13,6 @@ func _exit_tree() -> void:
 		dock.queue_free()
 	
 func _ready():
-	dock.editor_plugin = self
+	dock.initialize(self)
 	get_editor_interface().get_editor_settings().connect("settings_changed", dock, "on_editor_settings_changed")
 	dock.load_config()

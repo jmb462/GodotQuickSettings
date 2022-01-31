@@ -3,6 +3,7 @@
 export.cfg
 export_presets.cfg
 addons/QuickSettings/QuickSettings.cfg
+addons/QuickSettings.zip
 default_env.tres
 icon.png
 icon.png.import

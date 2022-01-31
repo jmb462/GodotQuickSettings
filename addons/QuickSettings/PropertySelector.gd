@@ -15,6 +15,8 @@ var mode : int = MODE.PROJECT
 
 onready var tree : Tree = $VBoxContainer/ScrollContainer/Tree
 onready var filter_edit : LineEdit = $VBoxContainer/HBoxContainer/Filter
+onready var property_name_edit : LineEdit = $VBoxContainer/VBoxContainer/PropertyNameEdit
+onready var display_name_edit : LineEdit = $VBoxContainer/VBoxContainer2/DisplayNameEdit
 
 func _ready():
 	get_ok().text = "Add"
@@ -26,7 +28,7 @@ func build_tree(filter : String = String()):
 	item_dictionary.clear()
 	
 	item_dictionary["root_item"] = tree.create_item()
-	
+
 	var properties : Array
 	if mode == MODE.PROJECT:
 		properties = ProjectSettings.get_property_list()
@@ -40,8 +42,13 @@ func build_tree(filter : String = String()):
 		var path_elements : Array = property_name.split('/')
 		
 		# Skip if not a Project property
-		if path_elements[0] in ignore_list:
+		if path_elements[0] in ignore_list or property["type"] == TYPE_DICTIONARY:
 			continue
+			
+		# Skip if already added to QuickSettings
+		if get_parent().has_setting(property_name):
+			continue
+			
 		# Skip if filtered by keywords
 		var hide_element : bool = false
 		if filter != "":
@@ -50,7 +57,7 @@ func build_tree(filter : String = String()):
 					hide_element = true
 			if hide_element:
 				continue
-
+		
 		var parent_string : String = String()
 		var parent : TreeItem = item_dictionary["root_item"]
 		var current_path : String = String()
@@ -67,29 +74,36 @@ func build_tree(filter : String = String()):
 				item_dictionary[current_path] = tree.create_item(parent)
 				item_dictionary[current_path].set_text(0, path_element.capitalize())
 				item_dictionary[current_path].set_meta("property", property_name)
-				
+
 			# Current item becomes parent for the next one
 			parent = item_dictionary[current_path]
 			parent_string = current_path
 
-
 func searchbar_grab_focus():
 	filter_edit.grab_focus()
+
+func get_display_name() -> String:
+	return display_name_edit.text
 
 # Reset filter before poping
 func reset(p_mode = MODE.PROJECT) -> void:
 	mode = p_mode
 	get_ok().set_disabled(true)
+	display_name_edit.set_editable(false)
+	display_name_edit.clear()
+	property_name_edit.clear()
 	filter_edit.clear()
 	build_tree()
-
 
 # Single click on an item
 func _on_Tree_item_selected():
 	get_ok().set_disabled(false)
+	display_name_edit.set_editable(true)
 	selected_property = tree.get_selected().get_meta("property")
-
-
+	display_name_edit.text = Array(selected_property.split("/")).pop_back().capitalize()
+	property_name_edit.text = selected_property
+	
+	
 # Double click on an item
 func _on_Tree_item_activated():
 	emit_signal("confirmed")

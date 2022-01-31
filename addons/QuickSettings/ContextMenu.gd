@@ -1,10 +1,12 @@
-extends PopupMenu
-class_name ClipBoardMenu
 tool
+extends PopupMenu
+class_name ContextMenu
+
 
 signal refresh_requested
+signal rename_requested
 
-enum CONTEXT_MENU {COPY_PATH, COPY_PROPERTY, COPY_AS_TEXT, PASTE}
+enum CONTEXT_MENU {COPY_PATH, COPY_PROPERTY, COPY_AS_TEXT, PASTE, RENAME}
 
 # Untyped variable to store various Variant type
 var property_clipboard
@@ -17,6 +19,7 @@ var edited_property : String = String()
 
 func _ready():
 	connect("refresh_requested", get_parent(), "update_view")
+	connect("rename_requested", get_parent(), "on_rename_requested")
 
 func set_edited_property(p_property_name : String) -> void:
 	edited_property = p_property_name
@@ -30,6 +33,8 @@ func build(p_property_click_type : int):
 		add_item("Copy value as text", CONTEXT_MENU.COPY_AS_TEXT)
 	add_separator("", CONTEXT_MENU.PASTE)
 	add_item("Paste value", CONTEXT_MENU.PASTE)
+	add_separator("", CONTEXT_MENU.RENAME)
+	add_item("Rename", CONTEXT_MENU.RENAME)
 	var can_paste : bool = property_clipoard_type != property_click_type and property_clipoard_type != -1 and property_click_type != -1
 	set_item_disabled(get_item_count() - 1,  can_paste)
 	set_size(Vector2.ZERO)
@@ -49,3 +54,5 @@ func on_ClipboardMenu_id_pressed(id):
 		CONTEXT_MENU.PASTE:
 			ProjectSettings.set(edited_property, property_clipboard)
 			emit_signal("refresh_requested")
+		CONTEXT_MENU.RENAME:
+			emit_signal("rename_requested", edited_property)

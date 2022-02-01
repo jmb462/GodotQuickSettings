@@ -369,7 +369,7 @@ func on_mouse_input_over_property_label(event, property) -> void:
 		if event.button_index == BUTTON_RIGHT:
 			edited_property = property["name"]
 			context_menu.set_edited_property(property["name"])
-			context_menu.build(property["type"])
+			context_menu.build(property["type"], get_property_index(property["name"]), grid.get_child_count()/2)
 			
 			context_menu.set_position(get_global_mouse_position())
 			context_menu.popup()
@@ -468,12 +468,21 @@ func get_tooltip_text(property_name : String) -> String:
 	tooltip += property_name
 	return tooltip
 
-func on_rename_requested(property : String):
+func get_property_index(property_name : String) -> int:
+	var index : int = 0
+	for setting in settings_names:
+		if setting is Dictionary and setting.has("name"):
+			if setting["name"] == property_name:
+				return index
+		index += 1
+	return -1
+
+func on_rename_requested(property : String) -> void:
 	rename_dialog.set_property(property)
 	rename_dialog.set_defaut_texture(grid.get_icon("Reload", "EditorIcons"))
 	rename_dialog.popup_centered()
 
-func on_rename_confirmed():
+func on_rename_confirmed() -> void:
 	var new_name : String = rename_dialog.line_edit.text.strip_edges()
 	for setting in settings_names:
 		if setting is Dictionary and setting.has("name"):
@@ -482,6 +491,21 @@ func on_rename_confirmed():
 				save_config()
 				update_view()
 	
+func on_move_up(index : int) -> void:
+	for dict in [settings_names, settings]:
+		var to_move = dict[index]
+		dict.insert(index - 1, to_move)
+		dict.remove(index + 1)
+	save_config()
+	update_view()
+
+func on_move_down(index : int) -> void:
+	for dict in [settings_names, settings]:
+		var to_move = dict[index]
+		dict.insert(index + 2, to_move)
+		dict.remove(index )
+	save_config()
+	update_view()
 
 # Load / Save plugin configuration
 func load_config() -> void:

@@ -1,8 +1,5 @@
 tool
 extends ConfirmationDialog
-class_name RenamePropertyDialog
-
-
 
 var edited_property : String = String()
 var default_button : Button
@@ -24,6 +21,8 @@ func set_property(property_name : String) -> void:
 	edited_property = property_name
 	label.text = property_name
 	line_edit.text = get_parent().get_display_name(edited_property, false)
+	revert_button.visible = line_edit.text != get_parent().get_display_name(edited_property, true)
+		
 
 func _on_TextureButton_pressed():
 	line_edit.text = get_parent().get_display_name(edited_property, true)
@@ -33,3 +32,7 @@ func _on_TextureButton_mouse_entered():
 	
 func _on_TextureButton_mouse_exited():
 	revert_button.modulate.a = 0.7
+
+
+func _on_LineEdit_text_changed(new_text):
+	revert_button.visible = new_text != get_parent().get_display_name(edited_property, true)

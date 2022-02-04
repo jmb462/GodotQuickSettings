@@ -1,7 +1,5 @@
 tool
 extends PopupMenu
-class_name ContextMenu
-
 
 signal refresh_requested
 signal rename_requested

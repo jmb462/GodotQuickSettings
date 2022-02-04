@@ -29,11 +29,11 @@ onready var restart_label : Label = $VBoxContainer/RestartLabel
 onready var grid : GridContainer = $VBoxContainer/ScrollContainer/GridContainer
 
 # Popups
-onready var array_editor : ArrayEditor= $ArrayEditor
+onready var array_editor = $ArrayEditor
 onready var file_dialog = $FileDialog
 onready var property_selector = $PropertySelector
-onready var context_menu : ContextMenu = $ContextMenu
-onready var rename_dialog : RenamePropertyDialog = $RenameDialog
+onready var context_menu = $ContextMenu
+onready var rename_dialog = $RenameDialog
 # Vector editor
 onready var vector_editor_packed_scene : PackedScene = preload("VectorEditor.tscn")
 
@@ -252,7 +252,7 @@ func add_to_grid(property : Dictionary):
 				line_edit.text = "TYPE_DICTIONARY" + String(get_value(property_name))
 				value_placeholder.add_child(line_edit)
 			TYPE_VECTOR2, TYPE_VECTOR3:
-				var vector_editor : VectorEditor = vector_editor_packed_scene.instance()
+				var vector_editor = vector_editor_packed_scene.instance()
 				vector_editor.set_value(get_value(property_name))
 				vector_editor.connect("value_changed", self, "on_vector_value_changed", [vector_editor, property_name])
 				value_placeholder.add_child(vector_editor)

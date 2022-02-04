@@ -5,6 +5,7 @@
 [node name="RenameDialog" type="ConfirmationDialog"]
 margin_right = 83.0
 margin_bottom = 58.0
+rect_min_size = Vector2( 250, 70 )
 window_title = "Change display name"
 script = ExtResource( 1 )
 __meta__ = {
@@ -49,3 +50,5 @@ modulate = Color( 1, 1, 1, 0.7 )
 margin_right = 40.0
 margin_bottom = 40.0
 hint_tooltip = "Restore default name"
+
+[connection signal="text_changed" from="VBoxContainer/HBoxContainer/LineEdit" to="." method="_on_LineEdit_text_changed"]

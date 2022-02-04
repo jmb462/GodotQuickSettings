@@ -1,5 +1,4 @@
 extends AcceptDialog
-class_name ArrayEditor
 tool
 
 # Array Editor variables

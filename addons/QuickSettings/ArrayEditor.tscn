@@ -64,6 +64,5 @@ margin_bottom = 170.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 columns = 2
-
 [connection signal="value_changed" from="VBoxContainer/HBoxContainer/SizeSpin" to="." method="on_SizeSpin_value_changed"]
 [connection signal="item_edited" from="VBoxContainer/ScrollContainer/Tree" to="." method="on_Tree_item_edited"]

@@ -39,14 +39,14 @@ func build(p_property_click_type : int, p_property_index : int, p_max_index : in
 	if property_click_type != TYPE_STRING:
 		add_item("Copy value as text", CONTEXT_MENU.COPY_AS_TEXT)
 	
-	add_separator("", CONTEXT_MENU.PASTE)
+	add_separator()
 	add_icon_item(get_icon("ActionPaste", "EditorIcons"), "Paste value", CONTEXT_MENU.PASTE)
 	
 	var can_paste : bool = (property_clipoard_type != property_click_type and property_clipoard_type != -1 and property_click_type != -1) or property_clipboard == null
 	set_item_disabled(get_item_count() - 1,  can_paste)
-	add_separator("", CONTEXT_MENU.RENAME)
+	add_separator()
 	add_icon_item(get_icon("Rename", "EditorIcons"), "Rename", CONTEXT_MENU.RENAME)
-	add_separator("", CONTEXT_MENU.MOVE_UP)
+	add_separator()
 	add_icon_item(get_icon("MoveUp", "EditorIcons"), "Move Up", CONTEXT_MENU.MOVE_UP)
 	set_item_disabled(get_item_count() - 1,  property_index < 1)
 	add_icon_item(get_icon("MoveDown", "EditorIcons"), "Move Down", CONTEXT_MENU.MOVE_DOWN)
